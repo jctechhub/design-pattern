@@ -136,7 +136,8 @@ namespace src.SOLID
 
     public class DemoOpenClose
     {
-        static void Main(string[] args)
+        //to call this funciton, just change the MainOC to main, and make sure to rename the 'Main' in Program.cs to something else. 
+        static void MainOC(string[] args)
         {
             var apple = new Product("Apple", Color.Green, Size.Small);
             var tree = new Product("Tree", Color.Green, Size.Large);
