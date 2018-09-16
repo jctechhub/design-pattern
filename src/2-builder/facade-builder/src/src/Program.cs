@@ -7,7 +7,8 @@ namespace src
         static void Main(string[] args)
         {
             var pb = new PersonBuilder();
-            Person person = pb
+            //must declare as "Person"
+            Person person = pb 
                 .Works
                     .At("Sydney")
                     .AsA("PM")
