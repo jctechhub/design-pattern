@@ -11,6 +11,10 @@ namespace main
 
             Console.WriteLine(PointFactory.NewCartesianPoint(2, 3));
             Console.WriteLine(PointFactory.NewPolarPoint(4, 5));
+
+            //issue with this approach, that someone may still create new class point by doing the following: 
+            var p = new Point(1, 2);
+
             Console.Read();
         }
     }
