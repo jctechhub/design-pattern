@@ -9,7 +9,7 @@ namespace main
         {
             Console.WriteLine("Hello World!");
             var john = new Person(new []{"john", "smith"}, new Address("London Road", 123));
-            var jane = new Person(john);
+            var jane = john.DeepCopy(); //5. then call the .DeepCopy() method.
             jane.Address.HouseNumber = 111;
             Console.WriteLine(john);
             Console.WriteLine(jane);
@@ -19,8 +19,16 @@ namespace main
         }
     }
 
+    /// <summary>
+    /// 1. creates new interface for deepcopy. 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public interface IPrototype<T>
+    {
+        T DeepCopy();
+    }
 
-    public class Person
+    public class Person : IPrototype<Person> //2. implements it.
     {
         public string[] Names;
         public Address Address;
@@ -31,6 +39,10 @@ namespace main
             Address = address;
         }
 
+        /// <summary>
+        /// MAKE SURE to have the pass in object to have DEEP COPY, not shalow copy. 
+        /// </summary>
+        /// <param name="other"></param>
         public Person(Person other)
         {
             Names = other.Names;
@@ -41,9 +53,18 @@ namespace main
             return $"{nameof(Names)} : {string.Join(" ", Names)}, {nameof(Address)}: {Address}";
 
         }
+
+        /// <summary>
+        /// 3. make sure to return a new Person from copying.
+        /// </summary>
+        /// <returns></returns>
+        public Person DeepCopy()
+        {
+            return new Person(Names, Address.DeepCopy());
+        }
     }
 
-    public class Address
+    public class Address : IPrototype<Address> //4. do the same thing for address.
     {
         public string StreetName { get; set; }
         public int HouseNumber { get; set; }
@@ -61,10 +82,17 @@ namespace main
         }
 
 
+        public Address DeepCopy()
+        {
+            return new Address(StreetName, HouseNumber);
+        }
+
         public override string ToString()
         {
             return $"{nameof(StreetName)} : {StreetName}, {nameof(HouseNumber)}: {HouseNumber}";
         }
+
+       
     }
 }
 
