@@ -1,5 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
 
 namespace main
 {
@@ -9,7 +12,9 @@ namespace main
         {
             Console.WriteLine("Hello World!");
             var john = new Person(new []{"john", "smith"}, new Address("London Road", 123));
-            var jane = john.DeepCopy(); //5. then call the .DeepCopy() method.
+            var jane = john.DeepCopyXml();
+
+            jane.Names[0] = "Jane";
             jane.Address.HouseNumber = 111;
             Console.WriteLine(john);
             Console.WriteLine(jane);
@@ -20,19 +25,47 @@ namespace main
     }
 
     /// <summary>
-    /// 1. creates new interface for deepcopy. 
+    /// 1. define the deepcopy extension method, with both XML or Binary.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface IPrototype<T>
+    public static class ExtensionMethods
     {
-        T DeepCopy();
+        public static T DeepCopy<T>(this T self)
+        {
+            MemoryStream stream = new MemoryStream();
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(stream, self);
+            stream.Seek(0, SeekOrigin.Begin);
+            object copy = formatter.Deserialize(stream);
+            stream.Close();
+            return (T)copy;
+        }
+
+        public static T DeepCopyXml<T>(this T self)
+        {
+            using (var ms = new MemoryStream())
+            {
+                XmlSerializer s = new XmlSerializer(typeof(T));
+                s.Serialize(ms, self);
+                ms.Position = 0;
+                return (T)s.Deserialize(ms);
+            }
+        }
     }
 
-    public class Person : IPrototype<Person> //2. implements it.
+
+    [Serializable] //3. creates this for Binary serialiser
+    public class Person 
     {
         public string[] Names;
         public Address Address;
 
+        /// <summary>
+        /// 2. creates the empty constructor for XML, otherwise it will fail. 
+        /// </summary>
+        public Person()
+        {
+            
+        }
         public Person(string[] names, Address address)
         {
             Names = names;
@@ -53,22 +86,18 @@ namespace main
             return $"{nameof(Names)} : {string.Join(" ", Names)}, {nameof(Address)}: {Address}";
 
         }
-
-        /// <summary>
-        /// 3. make sure to return a new Person from copying.
-        /// </summary>
-        /// <returns></returns>
-        public Person DeepCopy()
-        {
-            return new Person(Names, Address.DeepCopy());
-        }
     }
 
-    public class Address : IPrototype<Address> //4. do the same thing for address.
+    [Serializable]
+    public class Address
     {
         public string StreetName { get; set; }
         public int HouseNumber { get; set; }
 
+        public Address()
+        {
+            
+        }
         public Address(Address other)
         {
             this.StreetName = other.StreetName;
@@ -82,10 +111,7 @@ namespace main
         }
 
 
-        public Address DeepCopy()
-        {
-            return new Address(StreetName, HouseNumber);
-        }
+      
 
         public override string ToString()
         {
