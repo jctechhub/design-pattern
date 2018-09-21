@@ -12,9 +12,11 @@ namespace main
         {
             Console.WriteLine("Hello World!");
             var john = new Person(new []{"john", "smith"}, new Address("London Road", 123));
-            var jane = john.DeepCopyXml();
 
+          //  var jane = john.DeepCopyXml();
+            var jane = john.DeepCopy(); //5. then call the .DeepCopy() method.
             jane.Names[0] = "Jane";
+
             jane.Address.HouseNumber = 111;
             Console.WriteLine(john);
             Console.WriteLine(jane);
@@ -54,6 +56,7 @@ namespace main
 
 
     [Serializable] //3. creates this for Binary serialiser
+
     public class Person 
     {
         public string[] Names;
@@ -86,10 +89,13 @@ namespace main
             return $"{nameof(Names)} : {string.Join(" ", Names)}, {nameof(Address)}: {Address}";
 
         }
+
+  
     }
 
     [Serializable]
     public class Address
+
     {
         public string StreetName { get; set; }
         public int HouseNumber { get; set; }
@@ -109,9 +115,6 @@ namespace main
             this.StreetName = streetName;
             this.HouseNumber = houseNumber;
         }
-
-
-      
 
         public override string ToString()
         {
