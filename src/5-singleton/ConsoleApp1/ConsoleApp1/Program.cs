@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using MoreLinq;
+using NUnit.Framework;
 using static System.Console;
 
 namespace ConsoleApp1
@@ -21,6 +22,7 @@ namespace ConsoleApp1
 
         private SingletonDatabase()
         {
+            instanceCount++;
             WriteLine("Initializing database");
 
             capitals = File.ReadAllLines(
@@ -42,6 +44,18 @@ namespace ConsoleApp1
         public static SingletonDatabase Instance => instance.Value;
     }
 
+    [TestFixture]
+    public class SingletonTests
+    {
+        [Test]
+        public void IsSingltonTest()
+        {
+            var db = SingletonDatabase.Instance;
+            var db2 = SingletonDatabase.Instance;
+            Assert.That(db, Is.SameAs(db2));
+            Assert.That(SingletonDatabase.Count, Is.EqualTo(1));
+        }
+    }
 
     class Program
     {
