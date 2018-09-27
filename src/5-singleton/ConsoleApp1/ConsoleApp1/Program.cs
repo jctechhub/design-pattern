@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using MoreLinq;
 using static System.Console;
 
@@ -36,9 +37,9 @@ namespace ConsoleApp1
         {
             return capitals[name];
         }
-        private static SingletonDatabase instance = new SingletonDatabase();
+        private static Lazy<SingletonDatabase> instance = new Lazy<SingletonDatabase>(()=>new SingletonDatabase());
    
-        public static SingletonDatabase Instance => instance;
+        public static SingletonDatabase Instance => instance.Value;
     }
 
 
@@ -47,7 +48,8 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             var db = SingletonDatabase.Instance;
-
+            var city = "Sydney";
+            WriteLine($"{city} has the population of {db.GetPopulation(city)}");
             Console.Read();
         }
     }
