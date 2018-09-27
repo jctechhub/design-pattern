@@ -1,0 +1,8 @@
+﻿Sydney
+23230000
+Melbourne
+220000
+Seoul
+1750000000
+Osaka
+164249999
